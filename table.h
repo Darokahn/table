@@ -1,3 +1,5 @@
+#pragma once
+
 // table_t is a linear search table which converts strings to integer keys to start searching at an informed point.
 // It has an intentionally bare and memory-vulnerable API for simplicity, control, and efficiency.
 // It implicitly places trust onto the programmer to understand memory contracts and use them properly.
