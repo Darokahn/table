@@ -42,3 +42,5 @@ bool table_delete(table_t* t, const char* string, unsigned int length);
 void table_init(table_t* new, int initialSize);
 // frees array inside `t` and zeroes its members.
 void table_destroy(table_t* t);
+// resizes table to newSize or double its current if newSize is 0.
+void table_resize(table_t* t, int newSize);
