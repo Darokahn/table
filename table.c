@@ -42,6 +42,8 @@ struct table_entry* linearSearch(table_t* t, int startingIndex, const char* stri
     return NULL;
 }
 
+void table_resize(table_t* t, int newSize);
+
 int* table_lookup(table_t* t, const char* string, unsigned int length) {
     int startingIndex = getIntKey(string, length);
     table_entry* entry = linearSearch(t, startingIndex % t->capacity, string, length);
@@ -54,10 +56,14 @@ int* table_lookup(table_t* t, const char* string, unsigned int length) {
 
 int* table_insert(table_t* t, const char* string, unsigned int length) {
     int startingIndex = getIntKey(string, length);
+    if (t->count == t->capacity) {
+        table_resize(t, 0);
+    }
     table_entry* entry = linearSearch(t, startingIndex % t->capacity, string, length);
     if (entry->signature != NULL) return &(entry->payload);
     entry->signature = string;
     entry->sigLength = length;
+    t->count++;
     return &(entry->payload);
 }
 
@@ -67,5 +73,23 @@ bool table_delete(table_t* t, const char* string, unsigned int length) {
     if (entry->signature == NULL) return false;
     entry->signature = &GRAVESTONE;
     entry->sigLength = 0;
+    t->count--;
     return entry->payload;
+}
+
+void table_resize(table_t* t, int newSize) {
+    if (newSize == 0) newSize = t->capacity * 2;
+    table_t new;
+    table_init(&new, newSize);
+    printf("got here!\n");
+    fflush(stdout);
+    for (int i = 0; i < t->capacity; i++) {
+        printf("got here!\n");
+        fflush(stdout);
+        struct table_entry ent = t->entries[i];
+        if (ent.signature == NULL) continue;
+        *table_insert(&new, ent.signature, ent.sigLength) = ent.payload;
+    }
+    table_destroy(t);
+    *t = new;
 }
