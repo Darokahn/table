@@ -24,7 +24,7 @@ void table_destroy(table_t* t) {
 char GRAVESTONE;
 
 int getIntKey(const char* key, int length) {
-    int intKey;
+    int intKey = 0;
     memcpy(&intKey, key, MIN(length, sizeof intKey));
     return intKey;
 }
@@ -81,10 +81,8 @@ void table_resize(table_t* t, int newSize) {
     if (newSize == 0) newSize = t->capacity * 2;
     table_t new;
     table_init(&new, newSize);
-    printf("got here!\n");
     fflush(stdout);
     for (int i = 0; i < t->capacity; i++) {
-        printf("got here!\n");
         fflush(stdout);
         struct table_entry ent = t->entries[i];
         if (ent.signature == NULL) continue;
