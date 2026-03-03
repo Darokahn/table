@@ -23,9 +23,9 @@ void table_destroy(table_t* t) {
 
 char GRAVESTONE;
 
-int getIntKey(const char* key, int length) {
-    int intKey = 0;
-    memcpy(&intKey, key, MIN(length, sizeof intKey));
+long long int getIntKey(const char* key, int length) {
+    long long int intKey = 0;
+    memmove(&intKey, key, MIN(length, sizeof intKey));
     return intKey;
 }
 
