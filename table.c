@@ -31,7 +31,7 @@ long long int getIntKey(const char* key, int length) {
 
 // returns the first entry which matches by value or the first entry which contains NULL
 struct table_entry* linearSearch(table_t* t, int startingIndex, const char* string, unsigned int length) {
-    int steps;
+    unsigned int steps;
     int i;
     for (i = startingIndex, steps = 0; steps < t->capacity; i = (i + 1) % t->capacity, steps++) {
         if (t->entries[i].signature == NULL) return t->entries + i;
@@ -82,7 +82,7 @@ void table_resize(table_t* t, int newSize) {
     table_t new;
     table_init(&new, newSize);
     fflush(stdout);
-    for (int i = 0; i < t->capacity; i++) {
+    for (unsigned int i = 0; i < t->capacity; i++) {
         fflush(stdout);
         struct table_entry ent = t->entries[i];
         if (ent.signature == NULL) continue;
