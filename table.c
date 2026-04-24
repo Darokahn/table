@@ -9,11 +9,12 @@ int TABLE_NULL_BACKING;
 
 int* TABLE_NULL = &TABLE_NULL_BACKING;
 
-void table_init(table_t* new, int initialSize) {
+table_t* table_init(table_t* new, int initialSize) {
     new->capacity = initialSize;
     new->entries = malloc(new->capacity * sizeof *new->entries);
     memset(new->entries, 0, new->capacity * sizeof *new->entries);
     new->count = 0;
+    return new;
 }
 
 void table_destroy(table_t* t) {

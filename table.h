@@ -1,3 +1,4 @@
+#pragma once
 // table_t is a linear search table which converts strings to integer keys to start searching at an informed point.
 // It has an intentionally bare and memory-vulnerable API for simplicity, control, and efficiency.
 // It implicitly places trust onto the programmer to understand memory contracts and use them properly.
@@ -16,13 +17,13 @@ struct table_entry {
 
 typedef struct table_entry table_entry;
 
+typedef struct table_t table_t;
+
 struct table_t {
     table_entry* entries;
     unsigned int count;
     unsigned int capacity;
 };
-
-typedef struct table_t table_t;
 
 // The address of this value is used as the sentinel for lookups that find no existing key.
 // Returning it rather than `NULL` makes unconditional dereference safe.
@@ -37,6 +38,10 @@ int* table_insert(table_t* t, const char* string, unsigned int length);
 // returns prior value
 bool table_delete(table_t* t, const char* string, unsigned int length);
 // places initial values into `new`
-void table_init(table_t* new, int initialSize);
+table_t* table_init(table_t* new, int initialSize);
 // frees array inside `t` and zeroes its members.
 void table_destroy(table_t* t);
+
+#ifdef INSTANTIATE
+#include "table.c"
+#endif
