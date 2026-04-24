@@ -24,15 +24,15 @@ void table_destroy(table_t* t) {
 
 char GRAVESTONE;
 
-int getIntKey(const char* key, int length) {
-    int intKey;
-    memcpy(&intKey, key, MIN(length, sizeof intKey));
+long long int getIntKey(const char* key, int length) {
+    long long int intKey = 0;
+    memmove(&intKey, key, MIN(length, sizeof intKey));
     return intKey;
 }
 
 // returns the first entry which matches by value or the first entry which contains NULL
 struct table_entry* linearSearch(table_t* t, int startingIndex, const char* string, unsigned int length) {
-    int steps;
+    unsigned int steps;
     int i;
     for (i = startingIndex, steps = 0; steps < t->capacity; i = (i + 1) % t->capacity, steps++) {
         if (t->entries[i].signature == NULL) return t->entries + i;
@@ -42,6 +42,8 @@ struct table_entry* linearSearch(table_t* t, int startingIndex, const char* stri
     }
     return NULL;
 }
+
+void table_resize(table_t* t, int newSize);
 
 int* table_lookup(table_t* t, const char* string, unsigned int length) {
     int startingIndex = getIntKey(string, length);
@@ -55,10 +57,14 @@ int* table_lookup(table_t* t, const char* string, unsigned int length) {
 
 int* table_insert(table_t* t, const char* string, unsigned int length) {
     int startingIndex = getIntKey(string, length);
+    if (t->count == t->capacity) {
+        table_resize(t, 0);
+    }
     table_entry* entry = linearSearch(t, startingIndex % t->capacity, string, length);
     if (entry->signature != NULL) return &(entry->payload);
     entry->signature = string;
     entry->sigLength = length;
+    t->count++;
     return &(entry->payload);
 }
 
@@ -68,5 +74,21 @@ bool table_delete(table_t* t, const char* string, unsigned int length) {
     if (entry->signature == NULL) return false;
     entry->signature = &GRAVESTONE;
     entry->sigLength = 0;
+    t->count--;
     return entry->payload;
+}
+
+void table_resize(table_t* t, int newSize) {
+    if (newSize == 0) newSize = t->capacity * 2;
+    table_t new;
+    table_init(&new, newSize);
+    fflush(stdout);
+    for (unsigned int i = 0; i < t->capacity; i++) {
+        fflush(stdout);
+        struct table_entry ent = t->entries[i];
+        if (ent.signature == NULL) continue;
+        *table_insert(&new, ent.signature, ent.sigLength) = ent.payload;
+    }
+    table_destroy(t);
+    *t = new;
 }
